@@ -47,21 +47,45 @@ app.get("*", (req, res) => {
 });
 
 // ROUTE HANDLER
-function getFilmRecommendations(req, res) {
-  // request(`http://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=${req.params.id}`, function (error, response, body) {
-  //   console.log('body:', body);
-  //   res.send(body);
-  sequelize.query("SELECT * FROM `films`", { type: sequelize.QueryTypes.SELECT})
 
-    .then(films => {
-      // We don't need spread here, since only the results will be returned for select queries
-      res.json(films)
-    })
-    .catch(err => {
-      res.status(500).send('Not Implemented');
-    })
-  // })
-}
+
+  function getFilmRecommendations(req, res) {
+    // request(`http://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=${req.params.id}`, function (error, response, body) {
+    //   console.log('body:', body);
+    //   res.send(body);
+    sequelize.query(`SELECT * FROM films WHERE id == ${req.params.id}`, { type: sequelize.QueryTypes.SELECT})
+
+      .then(chosenFilm => {
+        console.log("id", chosenFilm[0].genre_id);
+        // We don't need spread here, since only the results will be returned for select queries
+        sequelize.query(`SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id}`, { type: sequelize.QueryTypes.SELECT})
+
+          .then(films => {
+            console.log("films", films);
+            sequelize.query(`SELECT name FROM genres WHERE genres.id == ${films[0].genre_id}`, { type: sequelize.QueryTypes.SELECT})
+            // console.log("data", films);
+            // We don't need spread here, since only the results will be returned for select queries
+            .then(genre => {
+
+
+              res.send({
+                genre: genre[0].name,
+                chosenFilm: chosenFilm,
+                films: films
+              })
+            })
+          })
+          .catch(err => {
+            res.status(500).send('Not Implemented');
+          })
+      })
+      .catch(err => {
+        res.status(500).send('Not Implemented');
+      })
+    // })
+  }
+
+
 
 
 
