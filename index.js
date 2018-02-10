@@ -12,11 +12,18 @@ Promise.resolve()
   .catch((err) => { if (NODE_ENV === 'development') console.error(err.stack); });
 
 // ROUTES
+
 app.get('/films/:id/recommendations', getFilmRecommendations);
 
 // ROUTE HANDLER
 function getFilmRecommendations(req, res) {
-  res.status(500).send('Not Implemented');
+  request(`http://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=${req.params.id}`, function (error, response, body) {
+    console.log('body:', body);
+    res.json(body);
+  })
+  // res.status(500).send('Not Implemented');
 }
+
+
 
 module.exports = app;
