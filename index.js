@@ -27,9 +27,24 @@ Promise.resolve()
     storage: './db/database.db'
   });
 
+  const Films = sequelize.define('films', {
+    title: {
+      type: Sequelize.STRING
+    },
+    release_date: {
+      type: Sequelize.STRING
+    },
+    genre_id: {
+      type: Sequelize.INTEGER
+    }
+  });
+
 // ROUTES
 
 app.get('/films/:id/recommendations', getFilmRecommendations);
+app.get("*", (req, res) => {
+  res.status(500).send("Incorrect path, try again.");
+});
 
 // ROUTE HANDLER
 function getFilmRecommendations(req, res) {
