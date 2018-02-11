@@ -47,20 +47,26 @@ app.get("*", (req, res) => {
 });
 
 // ROUTE HANDLER
-const plus15 = "2020-11-30";
-const minus15 = Date.parse("2003-11-30");
 
   function getFilmRecommendations(req, res) {
     // request(`http://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=${req.params.id}`, function (error, response, body) {
     //   console.log('body:', body);
     //   res.send(body);
+
+    let plus15;
+    let minus15;
     sequelize.query(`SELECT * FROM films WHERE id == ${req.params.id}`, { type: sequelize.QueryTypes.SELECT})
 
       .then(chosenFilm => {
+        plus15 = chosenFilm[0].release_date.split('-');
+        minus15 = chosenFilm[0].release_date.split('-');
+        plus15[0] = (parseInt(plus15[0])+15).toString();
+        minus15[0] = (parseInt(minus15[0])-15).toString();
 
-        console.log("id", minus15);
+        console.log("id", plus15.join('-'));
+
         // We don't need spread here, since only the results will be returned for select queries
-        sequelize.query(`SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id} AND release_date == "2005-11-30"`, { type: sequelize.QueryTypes.SELECT})
+        sequelize.query(`SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id} AND '${plus15.join('-')}' >= release_date <= '${minus15.join('-')}'`, { type: sequelize.QueryTypes.SELECT})
 
           .then(films => {
             console.log("films", films);
