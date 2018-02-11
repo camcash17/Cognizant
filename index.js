@@ -59,17 +59,17 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
   })
 });
 
-app.get('/films/notanid/recommendations', (req, res) => {
-  res.status(422).json({
-    message: 'Key Missing'
-  })
-});
-
-app.get('/films/notanid/recommendations?offset=notanoffset&limit=notalimit', (req, res) => {
-  res.status(422).json({
-    message: 'Key Missing'
-  })
-});
+// app.get('/films/notanid/recommendations', (req, res) => {
+//   res.status(422).json({
+//     message: 'Key Missing'
+//   })
+// });
+//
+// app.get('/films/notanid/recommendations?offset=notanoffset&limit=notalimit', (req, res) => {
+//   res.status(422).json({
+//     message: 'Key Missing'
+//   })
+// });
 
 // ROUTE HANDLER
 
@@ -121,11 +121,17 @@ app.get('/films/notanid/recommendations?offset=notanoffset&limit=notalimit', (re
             })
           })
           .catch(err => {
-            res.status(500).send('Not Implemented');
+            res.status(422).json({
+              message: 'Key Missing'
+            })
+            // res.status(500).send('Not Implemented');
           })
       })
       .catch(err => {
-        res.status(500).send('Not Implemented');
+        res.status(422).json({
+          message: 'Key Missing'
+        })
+        // res.status(500).send('Not Implemented');
       })
     // })
   }
