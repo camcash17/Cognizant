@@ -28,13 +28,23 @@ Promise.resolve()
   });
 
   const Films = sequelize.define('films', {
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true
+    },
     title: {
       type: Sequelize.STRING
     },
     release_date: {
       type: Sequelize.STRING
     },
-    genre_id: {
+    genre: {
+      type: Sequelize.STRING
+    },
+    averageRating: {
+      type: Sequelize.INTEGER
+    },
+    reviews: {
       type: Sequelize.INTEGER
     }
   });
@@ -42,8 +52,23 @@ Promise.resolve()
 // ROUTES
 
 app.get('/films/:id/recommendations', getFilmRecommendations);
-app.get("*", (req, res) => {
-  res.status(500).send("Incorrect path, try again.");
+
+app.get('/films/:id/recommendations/notarealroute', (req, res) => {
+  res.status(404).json({
+    message: 'Key Missing'
+  })
+});
+
+app.get('/films/notanid/recommendations', (req, res) => {
+  res.status(422).json({
+    message: 'Key Missing'
+  })
+});
+
+app.get('/films/notanid/recommendations?offset=notanoffset&limit=notalimit', (req, res) => {
+  res.status(422).json({
+    message: 'Key Missing'
+  })
 });
 
 // ROUTE HANDLER
@@ -86,7 +111,11 @@ app.get("*", (req, res) => {
                       averageRating: null,
                       reviews: null
                     }
-                  ]
+                  ],
+                  "meta": {
+                     "limit": 10,
+                     "offset": 0
+                  }
                 })
               // })
             })
