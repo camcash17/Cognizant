@@ -50,7 +50,7 @@ app.get("*", (req, res) => {
 
   function getFilmRecommendations(req, res) {
     // request(`http://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=${req.params.id}`, function (error, response, body) {
-    //   console.log('body:', body);
+    //   console.log('body:', response);
     //   res.send(body);
 
     let plus15;
@@ -66,7 +66,7 @@ app.get("*", (req, res) => {
         console.log("id", plus15.join('-'));
 
         // We don't need spread here, since only the results will be returned for select queries
-        sequelize.query(`SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id} AND '${plus15.join('-')}' >= release_date <= '${minus15.join('-')}'`, { type: sequelize.QueryTypes.SELECT})
+        sequelize.query(`SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id} AND release_date >= '${minus15.join('-')}' AND release_date <= '${plus15.join('-')}'`, { type: sequelize.QueryTypes.SELECT})
 
           .then(films => {
             console.log("films", films);
@@ -74,20 +74,21 @@ app.get("*", (req, res) => {
             // console.log("data", films);
             // We don't need spread here, since only the results will be returned for select queries
             .then(genre => {
-              console.log("id", films.id);
-              res.send({
-
-                recommendations: [
-                  {
-                    id: films[0].id,
-                    title: films[0].title,
-                    release_date: films[0].release_date,
-                    genre: genre[0].name,
-                    averageRating: null,
-                    reviews: null
-                  }
-                ]
-              })
+              console.log("id", films.length);
+              // films.map((d, i) => {
+                res.send({
+                  recommendations: [
+                    {
+                      id: films[0].id,
+                      title: films[0].title,
+                      release_date: films[0].release_date,
+                      genre: genre[0].name,
+                      averageRating: null,
+                      reviews: null
+                    }
+                  ]
+                })
+              // })
             })
           })
           .catch(err => {
