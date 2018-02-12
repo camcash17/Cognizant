@@ -2,7 +2,6 @@ const sqlite = require('sqlite'),
       Sequelize = require('sequelize'),
       request = require('request'),
       express = require('express'),
-      axios = require('axios');
       app = express();
 
 const { PORT=3000, NODE_ENV='development', DB_PATH='./db/database.db' } = process.env;
@@ -61,13 +60,9 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
 // ROUTE HANDLER
 
   function getFilmRecommendations(req, res) {
-    // request(`http://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=${req.params.id}`, function (error, response, body) {
+    request(`http://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=${req.params.id}`, function (error, response, body) {
     //   console.log('body:', response);
     //   res.send(body);
-    // axios(`http://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=${req.params.id}`)
-    // .then((res) => {
-    //   let reviews = res.data;
-    //   console.log("film id", reviews[0].reviews[0].id)
 
       let plus15;
       let minus15;
@@ -80,7 +75,7 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
         minus15[0] = (parseInt(minus15[0])-15).toString();
         console.log("id", plus15.join('-'));
 
-        sequelize.query(`SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id} AND release_date >= '${minus15.join('-')}' AND release_date <= '${plus15.join('-')}'`, { type: sequelize.QueryTypes.SELECT})
+        sequelize.query(`SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id} AND release_date >= '${minus15.join('-')}' AND release_date <= '${plus15.join('-')}' LIMIT 3`, { type: sequelize.QueryTypes.SELECT})
         .then(films => {
           console.log("films", films);
           sequelize.query(`SELECT name FROM genres WHERE genres.id == ${films[0].genre_id}`, { type: sequelize.QueryTypes.SELECT})
@@ -95,12 +90,12 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
                     title: films[0].title,
                     release_date: films[0].release_date,
                     genre: genre[0].name,
-                    averageRating: null,
-                    reviews: null
+                    averageRating: JSON.parse(body)[0].reviews[0].rating,
+                    reviews: JSON.parse(body)[0].reviews.length
                   }
                 ],
                 meta: {
-                   limit: 10,
+                   limit: 1,
                    offset: 0
                 }
               })
@@ -120,7 +115,7 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
         })
         // res.status(500).send('Not Implemented');
       })
-    // })
+    })
   }
 
 
