@@ -83,21 +83,21 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
           .then(genre => {
             console.log("id", films.length);
             // Films.findAll().then(recommendations => {
-              res.json({
-                recommendations: [
-                  {
-                    id: films[0].id,
-                    title: films[0].title,
-                    release_date: films[0].release_date,
-                    genre: genre[0].name,
-                    averageRating: JSON.parse(body)[0].reviews[0].rating,
-                    reviews: JSON.parse(body)[0].reviews.length
-                  }
-                ],
-                meta: {
-                   limit: 1,
-                   offset: 0
-                }
+              res.json({ recommendations: films, genres: genre[0].name, reviews: JSON.parse(body)[0].reviews.length, meta: {limit: 1, offset: 0}
+                // recommendations: [
+                //   {
+                //     id: films[0].id,
+                //     title: films[0].title,
+                //     release_date: films[0].release_date,
+                //     genre: genre[0].name,
+                //     averageRating: JSON.parse(body)[0].reviews[0].rating,
+                //     reviews: JSON.parse(body)[0].reviews.length
+                //   }
+                // ],
+                // meta: {
+                //    limit: 1,
+                //    offset: 0
+                // }
               })
             // })
           })
