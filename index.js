@@ -87,7 +87,7 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
          }
          //AVERAGE RATING FOUND BY SUMMING ALL RATINGS AND DIVING BY COUNT OF ALL REVIEWS
          for(name in sums) {
-             results.push({ rating: sums[rating] / counts[rating] });
+             results.push({rating: sums[rating] / counts[rating] });
          }
          return results;
       }
@@ -98,7 +98,7 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
       console.log("reviews", reviewsCount);
 
       //FIRST QUERY COMMAND TO FIND THE CHOSEN FILM DATA BY COMPARING THE FILM ID PARAMATER FROM URL
-      sequelize.query(`SELECT * FROM films WHERE id == ${req.params.id}`, { type: sequelize.QueryTypes.SELECT})
+      sequelize.query(`SELECT * FROM films WHERE id == ${req.params.id}`, {type: sequelize.QueryTypes.SELECT})
       .then(chosenFilm => {
 
         //METHOD TO CREATE A RANGE OF +/- 15 YEARS FROM RELEASE DATE
@@ -110,19 +110,19 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
 
         //SECOND QUERY COMMAND TO SELECT ALL FILMS WITH THE SAME GENRE AND WITHIN RELEASE DATE RANGE AS CHOSEN FILM
         sequelize.query(
-          `SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id} AND release_date >= '${minus15.join('-')}' AND release_date <= '${plus15.join('-')}' LIMIT 3`, { type: sequelize.QueryTypes.SELECT})
+          `SELECT * FROM films WHERE genre_id == ${chosenFilm[0].genre_id} AND release_date >= '${minus15.join('-')}' AND release_date <= '${plus15.join('-')}' LIMIT 3`, {type: sequelize.QueryTypes.SELECT})
         .then(films => {
           console.log("films", films);
 
           //THIRD QUERY COMMAND TO GRAB THE GENRE NAME BY USING THE FILM GENRE ID
-          sequelize.query(`SELECT name FROM genres WHERE genres.id == ${films[0].genre_id}`, { type: sequelize.QueryTypes.SELECT})
+          sequelize.query(`SELECT name FROM genres WHERE genres.id == ${films[0].genre_id}`, {type: sequelize.QueryTypes.SELECT})
           // console.log("data", films);
           .then(genre => {
             console.log("id", films.length);
             // Films.findAll().then(recommendations => {
 
               //SENDING RESPONSE OF FILM RECOMMENDATIONS INCLUDING LIMITS AND OFFSET VALUES
-              res.json({ recommendations: films, recs: [{ id: films[0].id, title: films[0].title, release_date: films[0].release_date, genre: genre[0].name, averageRating: avgRating[0].rating, reviews: JSON.parse(body)[0].reviews.length }], meta: {limit: 1, offset: 0}
+              res.json({recommendations: films, recs: [{id: films[0].id, title: films[0].title, release_date: films[0].release_date, genre: genre[0].name, averageRating: avgRating[0].rating, reviews: JSON.parse(body)[0].reviews.length}], meta: {limit: 1, offset: 0}
                 //COMMENTED CODE DISPLAYING CORRECT RECOMMENDATIONS FORMAT, BUT ONLY DISPLAYING ONE RESULT
                 //CODE USED ABOVE IS DISPLAYING MULTIPLE FILMS MEETING CRITERIA
                 // recommendations: [
@@ -147,20 +147,20 @@ app.get('/films/:id/recommendations/notarealroute', (req, res) => {
             res.status(422).json({
               message: 'Key Missing'
             })
-          })
+          });
         })
         .catch(err => {
           res.status(422).json({
             message: 'Key Missing'
           })
-        })
+        });
       })
       .catch(err => {
         res.status(422).json({
           message: 'Key Missing'
         })
-      })
-    })
-  }
+      });
+    });
+  };
 
 module.exports = app;
